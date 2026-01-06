@@ -143,7 +143,7 @@ export function WillDashboard({ signer, address }: WillDashboardProps) {
         <ClaimSection
           myTransfer={myTransfer}
           onClaim={claim}
-          onCheckTransfer={fetchMyTransfer}
+          onCheckTransfer={(addr: string) => fetchMyTransfer(addr)}
           loading={loading}
           willAddress={willAddress}
         />

@@ -74,11 +74,11 @@ export function useWillContract(signer: JsonRpcSigner | null, address: string | 
     }
   }, [willAddress, signer, getWillContract]);
 
-  const fetchMyTransfer = useCallback(async () => {
-    if (!willAddress || !signer) return;
+  const fetchMyTransfer = useCallback(async (willAddr: string) => {
+    if (!willAddr || !signer) return;
 
     try {
-      const will = getWillContract(willAddress);
+      const will = getWillContract(willAddr);
       if (!will) return;
 
       const transfer = await will.getMyTransfer();
@@ -89,12 +89,13 @@ export function useWillContract(signer: JsonRpcSigner | null, address: string | 
           claimed: transfer.claimed,
         });
       } else {
-        setMyTransfer(null);
+        setMyTransfer({ amount: 0n, unlockTime: 0n, claimed: false });
       }
     } catch (err: any) {
       console.error('Error fetching transfer:', err);
+      setError('Failed to check transfer. Is this a valid Will contract?');
     }
-  }, [willAddress, signer, getWillContract]);
+  }, [signer, getWillContract]);
 
   const scheduleClaim = useCallback(async (recipient: string, delayMinutes: number, amountEth: string) => {
     if (!willAddress || !signer) return;
@@ -147,7 +148,7 @@ export function useWillContract(signer: JsonRpcSigner | null, address: string | 
 
       const tx = await will.claim();
       await tx.wait();
-      await fetchMyTransfer();
+      await fetchMyTransfer(willAddr);
     } catch (err: any) {
       setError(err.reason || err.message || 'Failed to claim');
     } finally {
