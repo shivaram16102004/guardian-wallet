@@ -15,7 +15,7 @@ interface Transfer {
 interface ClaimSectionProps {
   myTransfer: Transfer | null;
   onClaim: (willAddress: string) => Promise<void>;
-  onCheckTransfer: () => Promise<void>;
+  onCheckTransfer: (willAddress: string) => Promise<void>;
   loading: boolean;
   willAddress: string;
 }
@@ -56,7 +56,7 @@ export function ClaimSection({ myTransfer, onClaim, onCheckTransfer, loading, wi
             className="bg-secondary/50 border-border/50 focus:border-primary"
           />
         </div>
-        <Button variant="secondary" onClick={onCheckTransfer} className="w-full">
+        <Button variant="secondary" onClick={() => onCheckTransfer(checkWillAddress)} disabled={!checkWillAddress} className="w-full">
           Check My Transfer
         </Button>
       </div>
